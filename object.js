@@ -49,3 +49,26 @@ class Dogf extends Animalf {
 const dogAf = new Dogf('Miluf');
 dogAf.speak(); // Miluf makes a noise.
 dogAf.eat(); // Gummy Gummy!
+
+// 4. Create an object with common methods and use it as a mixin template
+const animalBehavior =  { 
+  speak() {
+    console.log(`${this.name} makes a noise.`);
+  },
+   eat() {
+    console.log('Bummy Bummy!');
+  }
+}
+
+class Dogab {
+ constructor(name) {
+    this.name = name;
+  }
+}
+
+Object.assign(Dogab.prototype, animalBehavior);
+
+const dogAab = new Dogab('Miluab');
+dogAab.speak(); // Milu makes a noise.
+dogAab.eat(); // Yummy Yummy!
+
