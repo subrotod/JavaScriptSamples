@@ -211,3 +211,4 @@ console.log(typeof(animalBehavior));
 console.log(typeof(dogAab));
 console.log(typeof(Animalf));
 
+// Multiple mixin examples needed
