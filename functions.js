@@ -39,14 +39,14 @@ var agesDoubled = users.map(user => {
   // to a value depending on the way a function is called, and the rules as to what this might 
   // be defined as are notoriously convoluted.
 
+  // API constructor function
   function API() {
     this.uri = 'http://www.my-hipster-api.io/';
   }
   
-  // Code that does not work because the this is locally bound to the Promise object
+  // Code that does not work because the 'this' is locally bound to the Promise object's 'this'
 
-  // let's pretend this method gets all documents at
-  // a specific RESTful resource...
+  // let's pretend this method gets all documents ata specific RESTful resource...
   API.prototype.get = function(resource) {
     return new Promise(function(resolve, reject) {
       // this doesn't work
@@ -61,8 +61,8 @@ var agesDoubled = users.map(user => {
 // By calling api.get, we should be making a request to http://www.my-hipster-api.io/nuggets
 // However the 'this' does not resolve because this.uri is undefined so when we come to call 
 // our http.get() method that we’re wrapping, we can’t properly form the URL we need. 
-// Why would this be? Well, when we call new Promise(), we’re calling a constructor of another 
-// object the Promise, which creates a new lexical 'this' in turn. Put simply, this.uri is not in scope.
+// Why would this be? Well, when we call new Promise(), we’re calling the Promise constructor, 
+// which creates a new lexical 'this' in turn. Put simply, the API object's this.uri is not in scope.
 api.get('nuggets').then(function(data) {
   console.log(data);
 });
@@ -83,7 +83,7 @@ API.prototype.get = function(resource) {
   // b) Surely there must be a way for us to define this ourselves? If we’re working inside 
   // an environment where we have ES5 features (IE9 or above), we could use .bind(), which 
   // is a method on the Function prototype that allows us to “bind” (funnily enough) a value 
-  // a function’s lexical this.
+  // to a function’s lexical this.
 
   API.prototype.get = function(resource) {
     return new Promise(
@@ -99,7 +99,7 @@ API.prototype.get = function(resource) {
   // c) Enter arrow functions! In ES6, the same function above could be defined like this. 
   // but what’s the arrow doing? Well, it actually binds the context of the Promise’s this 
   // to the context of the function that contains it, so this.uri resolves to the value we 
-  // assigned in the constructor. This avoids having to use bind or the dreaded 
+  // assigned in the API constructor. This avoids having to use bind or the dreaded 
   // var self = this trick to keep a reference to the desired scope.
 
   API.prototype.get = function(resource) {
@@ -109,28 +109,4 @@ API.prototype.get = function(resource) {
       });
     });
   };
-
-// In arrow functions, this retains the value of the enclosing lexical context's this. 
-// In global code, it will be set to the global object:
- 
-// Glbal context
-
-// Function Context
-function f1() {
-    return this;
-}
-  
-// In a browser:
-// f1() === window; // true 
-  
-// In Node:
-console.log(f1() === global); // true
-
-// In strict mode this is undefined
-function f2() {
-    'use strict'; // see strict mode, note all code executed after call to f2() is in strict mode
-    return this;
-  }
-  
-console.log(f2() === undefined); // true
 

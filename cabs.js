@@ -1,3 +1,4 @@
+// Read http://javascriptissexy.com/understand-javascripts-this-with-clarity-and-master-it/ first
 // How to pass a 'this' to a function
 // An object can be passed as the first argument to call or apply and this will be bound to it.
 var obj = {a: 'Custom'};
@@ -61,49 +62,58 @@ console.log(h()); // azerty
 var o = {a: 37, f: f, g: g, h: h};
 console.log(o.a, o.f(), o.g(), o.h()); // 37,37, azerty, azerty
 
-// Arrow function binding rules
-// In arrow functions, this retains the value of the enclosing lexical context's this. 
-// In global code, it will be set to the global object:
+// When this is most misunderstood and becomes tricky
+// The this keyword is most misunderstood when we borrow a method that uses this, when 
+// a) we assign a method that uses this to a variable, 
+// b) when a function that uses this is passed as a callback function, and 
+// c) when this is used inside a closure—an inner function. We will look at each scenario and the solutions 
+// for maintaining the proper value of this in each example.
 
-var globalObject = this;
+// Arrow function binding rules
+// In arrow functions, 'this' retains the value of the enclosing lexical context's this. 
+
+var myglobalObject = this;
 var foo = (() => this);
-console.log(foo() === globalObject); // true
-console.log(this === globalObject); // true
+console.log(foo() === myglobalObject); // true
+console.log(this === myglobalObject); // true
+console.log(myglobalObject);
 
 a = "NodeGlobal"
 console.log(global.a);
-console.log(this);
+console.log(global);
 
-// Note: if this arg is passed to call, bind, or apply on invocation of an arrow function 
+
+
+// Note: if 'this' arg is passed to call, bind, or apply on invocation of an arrow function 
 // it will be ignored. You can still prepend arguments to the call, but the first argument 
 // (thisArg) should be set to null.
 
 // Call as a method of an object
-var globalObject = this;
+var myglobalObject = this; // Note that 'this' should be the global, but it isn't 
 var foo = (() => this);
 var obj = {func: foo};
-console.log(obj.func() === globalObject); // true
+console.log(obj.func() === myglobalObject); // true
 
 // Attempt to set this using call
-console.log(foo.call(obj) === globalObject); // true, i.e. obj not used as this value
+console.log(foo.call(obj) === myglobalObject); // true, i.e. obj not used as this value
 
 // Attempt to set this using bind
 foo = foo.bind(obj);
-console.log(foo() === globalObject); // true, i.e. obj not used as this value
+console.log(foo() === myglobalObject); // true, i.e. obj not used as this value
 
-// Create obj with a method bar that returns a function that returns its this. The 
+// Create obj with a method bar that returns a function that returns the obj's 'this'. The 
 // returned function is created as an arrow function, so its 'this' is permanently bound to the
-// this of its enclosing function. The value of bar can be set in the call, which in turn 
+// 'this' of its enclosing function. The value of bar can be set in the call, which in turn 
 // sets the value of the returned function.
 
 var obj = {
     bar: function() {
-      var x = (() => this);
+      var x = () => this; // x is a anonymous function that returns the this object in effect when bar is called
       return x;
     }
   };
   
-  // Call bar as a method of obj, setting its this to obj
+  // Call bar as a method of obj, setting it's 'this' to obj
   // Assign a reference to the returned function to fn
   var fn = obj.bar();
   
@@ -115,10 +125,24 @@ var obj = {
   var fn2 = obj.bar;
   // Calling the arrow function's this from inside the bar method()
   // will now return global, because it follows the this from fn2.
-  console.log(fn2()() == global); // true
+  console.log(fn2()() === global); // true
 
+// Another example similar to the obj example.
+// What happens when an object function is called directly i.e without an object reference 
+birthYear = 1960; // stored in the 'global' object
+const person = {
+  name: 'peter',
+  birthYear: 1994,
+  calcAge: function() {
+    console.log(2018 - this.birthYear);
+  }
+}
+person.calcAge(); // called with object reference 
+// 'this' refers to 'person', because 'calcAge' was called with //'person' object reference
+const calculateAge = person.calcAge;
 
-
+calculateAge(); // called withot object reference 
+// 'this' refers to the 'global' object, because no object reference was given
 
 
 

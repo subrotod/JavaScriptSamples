@@ -40,8 +40,9 @@ function Person(first, last, age, eye) {
 // Create a Person object
 var myFather = new Person("John", "Doe", 50, "green");
 
-// d. In ECMAScript 2015, an object can also be created with the function Object.create(). The Object.create() 
-// method creates a new object, using an existing object as the prototype of the newly created object.
+// d. In ECMAScript 2015, an object can also be created with the function Object.create(). 
+// The Object.create() method creates a new object, using an existing object as the prototype 
+// of the newly created object.
 const person_generic = {
   isHuman: false,
   printIntroduction: function () {
