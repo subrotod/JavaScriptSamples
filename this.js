@@ -26,7 +26,7 @@ console.log(f2() === undefined); // true
 a = 10; // property on the global object
 var d = 20; // variable at global scope
 
-// Think of testp as the promise constructor
+// testp is a constructor function 
 function testp(a, b, c) {
   this.a = a;
   this.b = this.a + b;

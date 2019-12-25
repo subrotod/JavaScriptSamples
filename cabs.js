@@ -141,7 +141,7 @@ person.calcAge(); // called with object reference
 // 'this' refers to 'person', because 'calcAge' was called with //'person' object reference
 const calculateAge = person.calcAge;
 
-calculateAge(); // called withot object reference 
+calculateAge(); // called without object reference 
 // 'this' refers to the 'global' object, because no object reference was given
 
 
