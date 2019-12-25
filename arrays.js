@@ -65,6 +65,8 @@ const characters = [
     { name: 'wonder_woman', env: 'dc_comics' },
   ];
   
+  // The Object.assign() method is used to copy the values of all enumerable own properties from one or more 
+  // source objects to a target object. It will return the target object.
   console.log(
     characters
       .filter(character => character.env === 'marvel')
