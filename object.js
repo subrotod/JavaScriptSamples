@@ -10,7 +10,7 @@ var person = {
 };
 
 // b. Define and create a single object, with the keyword new. This can be wrapped within a function that 
-// returns person
+// returns person, as in example c.
 var person_john = new Object(); // or var person = {}
 person_john.firstName = "John";
 person_john.lastName = "Doe";
