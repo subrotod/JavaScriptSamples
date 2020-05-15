@@ -210,6 +210,7 @@ dogAab.eat(); // Yummy Yummy!
 console.log(dogAab.__proto__);
 console.log(typeof(animalBehavior));
 console.log(typeof(dogAab));
+console.log(typeof(Dogab));
 console.log(typeof(Animalf));
 
 // Multiple mixin examples needed
