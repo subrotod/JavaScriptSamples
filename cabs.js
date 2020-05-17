@@ -121,7 +121,7 @@ var obj = {
   // to the global object or undefined in strict mode
   console.log(fn() === obj); // true
   
-  // But caution if you reference the method of obj without calling it
+  // But caution if you reference the bar method of obj without calling it
   var fn2 = obj.bar;
   // Calling the arrow function's this from inside the bar method()
   // will now return global, because it follows the this from fn2.
