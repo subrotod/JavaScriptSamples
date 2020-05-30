@@ -1,5 +1,5 @@
 // This file shows how to use fs.createReadStream() to read from a stream. A stream is like a file
-// without an end and arrives in bursts. Very useful in webservers where data is coming in
+// without an end and data arrives in bursts. Very useful in webservers where data is coming in
 // from a client. The streaming functions communicate through prespecified callbacks for events,
 // when data arrives or the stream is closed.
 

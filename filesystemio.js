@@ -35,7 +35,7 @@ const fs = require("fs");
 //Open a file for reading
 const file = "./file.txt";
 
-// Will fail as file.txt does not exist
+// This code will fail as file.txt does not exist
 // fs.open(file, "r", (err, fd) => {
 //   if (err) {
 //     console.log(err);
@@ -44,7 +44,7 @@ const file = "./file.txt";
 //   }
 // });
 
-// if you call fs.open or any of the others that give a fd,// you must eventually fs.close with the fd
+// if you call fs.open or any of the others that return a fd, you must eventually call fs.close with the fd
 // that you are given.
 
 // reading and writing after calling fs.open - Asynchronous
@@ -66,12 +66,12 @@ const file = "./file.txt";
 
 const file2 = "./example_file.txt";
 
-// Works - Asynchronous - reads in all 38 characters in one shot
+// Asynchronous solution - reads in all 38 characters in one shot
 const len = 38;
 const buffr = Buffer.alloc(len);
 let offset = 0;
 let total_bytes = 0;
-
+/*
 fs.open(file2, "r", (err, fd) => {
   if (err) {
     console.log(err);
@@ -80,6 +80,7 @@ fs.open(file2, "r", (err, fd) => {
       if (err2) {
         console.log(err2);
       } else {
+        console.log("fs.read read in entire file in one shot results");
         console.log(buffr.toString("utf8"));
         console.log(bytes_read);
         total_bytes = total_bytes + bytes_read;
@@ -94,51 +95,97 @@ fs.open(file2, "r", (err, fd) => {
     }
   });
 });
+*/
 
-/* Does not work - Asynchronous - emulates the while loop synchronous solution
-
-let offset = 0;
-let count = 0;
-let total_bytes = 0;
-const file2 = "./example_file.txt";
-const len = 26;
-const buffr_a = Buffer.alloc(len);
+/* Asynchronous - emulates the while loop synchronous solution, reading 26 bytes at a time. */
+// let total_bytes = 0; declared earlier
+// const file2 = "./example_file.txt"; declared earlier
+let chunk_size = 26; // This is the maximum chunkSize
+const file_size = 38; // file size
+const buffr_a = Buffer.alloc(file_size); // This buffer will be written into by each fs.read call. The param values
+// guarantee that the data will not be overwritten.
 
 fs.open(file2, "r", (err, fd) => {
   if (err) {
     console.log(err);
   } else {
-    // count < 3 is a guard to prevent infnite loop
-    while (total_bytes < size && count < 3) {
+    chunk_size = 26; // chunksize for reading
+    total_bytes = 0;
+
+    while (total_bytes < file_size) {
+      chunk_size =
+        chunk_size <= file_size - total_bytes
+          ? chunk_size
+          : file_size - total_bytes;
+
       fs.read(
         fd,
         buffr_a,
-        offset,
-        len,
+        total_bytes,
+        chunk_size, // chunksize
         total_bytes,
         (err2, bytes_read, buffr_a) => {
           if (err2) {
             console.log(err2);
-          } else {
-            console.log(buffr.toString("utf8"));
-            console.log(bytes_read);
-            total_bytes = total_bytes + bytes_read;
-            console.log(total_bytes);
           }
         }
       );
-
-      count++;
+      total_bytes = total_bytes + chunk_size;
     }
+  }
 
+  console.log("fs.read in loop results");
+  console.log(buffr_a.toString("utf8"));
+
+  fs.close(fd, (err) => {
+    if (err) {
+      console.log("close error" + err);
+    }
+  });
+});
+
+// Example below is from https://stackoverflow.com/questions/5985748/node-js-fs-read-example
+// note use of fs.fstat to get file size and allocate the buffer based on the file size dynamically
+const filepath = "./example_file.txt";
+
+/* 
+fs.open(filepath, "r", function (err, fd) {
+  fs.fstat(fd, function (err, stats) {
+    var bufferSize = stats.size,
+      chunkSize = 512,
+      buffer = Buffer.alloc(bufferSize),
+      bytesRead = 0;
+
+    while (bytesRead < bufferSize) {
+      if (bytesRead + chunkSize > bufferSize) {
+        chunkSize = bufferSize - bytesRead;
+      }
+      fs.read(
+        fd,
+        buffer,
+        bytesRead,
+        chunkSize,
+        bytesRead,
+        (err2, bytesRead, buffer) => {
+          if (err2) {
+            console.log(err2);
+          }
+        }
+      );
+      bytesRead += chunkSize;
+    }
+    console.log(buffer.toString("utf8", 0, bufferSize));
     fs.close(fd, (err) => {
       if (err) {
         console.log("close error" + err);
       }
     });
-  }
+  });
 });
-*/
 
+*/
 // https://stackoverflow.com/questions/12121775/convert-streamed-buffers-to-utf8-string
-// Interesting read when doing streamed i/o with fixed size buffers
+// Interesting read and example  when doing streamed i/o with fixed size buffers and
+// the encoding information/start of symbol info needs to be carried over into the next buffer.
+// This is needed as all symbols do not have the same fixed size encoding. In utf8
+// ascii characters are 1 byte, and others may be 2, 3 or 4 bytes depending on the language.
