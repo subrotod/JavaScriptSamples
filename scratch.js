@@ -8,3 +8,11 @@ console.log(value);
 
 value = "dob" in obj ? obj.dob : 99;
 console.log(value);
+
+var a = String("foo");
+var b = a;
+console.log(a, b);
+a = String("bar");
+console.log(a, b);
+
+console.log(typeof b);

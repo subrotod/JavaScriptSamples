@@ -122,7 +122,7 @@ fs.open(file2, "r", (err, fd) => {
         fd,
         buffr_a,
         total_bytes,
-        chunk_size, // chunksize
+        chunk_size,
         total_bytes,
         (err2, bytes_read, buffr_a) => {
           if (err2) {

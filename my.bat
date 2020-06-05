@@ -1,0 +1,2 @@
+dir
+REM mkdir child
